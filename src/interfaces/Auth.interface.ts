@@ -9,9 +9,10 @@ declare namespace AuthNameSpace {
   interface TSignup extends UserNameSpace.ICreate {}
 
   interface ILogin {
-    email: string;
+    phoneNumber: string;
     password: string;
   }
+  
   interface ILoginResponse {
     token: string;
     user: Omit<UserNameSpace.IModel, 'password'>;
