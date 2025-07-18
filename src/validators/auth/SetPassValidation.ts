@@ -1,6 +1,6 @@
 import { body } from 'express-validator';
 
-const sendOtpaValidation = [
+const setPassValidation = [
   body('phoneNumber')
     .notEmpty()
     .withMessage('Phone number is required')
@@ -16,7 +16,7 @@ const sendOtpaValidation = [
     .withMessage('OTP must be 6 digits long')
     .isNumeric()
     .withMessage('OTP must be numeric'),
-
+    
     body('password')
     .notEmpty()
     .withMessage('Password is required')
@@ -30,8 +30,7 @@ const sendOtpaValidation = [
     .withMessage('Password must contain at least one number')
     .matches(/[!@#$%^&*()_+\-=[\]{};':"\\|,.<>/?]/)
     .withMessage('Password must contain at least one special character'),
-    
 
 ];
 
-export default sendOtpaValidation;
+export default setPassValidation;

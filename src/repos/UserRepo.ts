@@ -12,8 +12,9 @@ class UserRepo {
     return await UserModel.findOne({ phoneNumber });
   }
    public static async getUserByPhoneNumber(phoneNumber: string): Promise<UserNameSpace.IModel | null> {
-      return await UserModel.findOne({phoneNumber}).lean()
+      return await UserModel.findOne({phoneNumber})
     }
+    
   
 }
 

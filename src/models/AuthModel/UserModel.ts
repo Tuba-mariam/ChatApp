@@ -4,7 +4,7 @@ import UserNameSpace from '../../interfaces/User.interface';
 export const userSchema = new mongoose.Schema<UserNameSpace.IModel>(
   {
     phoneNumber: { type: String, required: true, unique: true },
-     password: { type: String },
+    password: { type: String },
     otp: { type: String },
     otpExpiresAt: { type: Date },
    

@@ -4,7 +4,7 @@ import bodyParser from 'body-parser';
 import { connectDb } from './config/connectDb';
 import http from 'http';
 import { Server } from 'socket.io';
-import { registerRoutes } from './routes/RegisterRoutes';
+import { registerRoutes } from './routes/RegistersRoutes';
 
 
 const app = express();

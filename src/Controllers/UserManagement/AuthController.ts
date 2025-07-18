@@ -1,16 +1,14 @@
 import { Request, Response } from 'express';
-import GenericNameSpace from '../interfaces/Generic.interface';
-import UserRepo from '../repos/UserRepo';
-import { generateOtp, otpExpiresAt } from '../utils/OtpHelper';
-import UserModel from '../models/AuthModel/UserModel';
-import createPasswordHash from '../utils/CreatePasswordHash';
-import AuthNameSpace from '../interfaces/Auth.interface';
-import config from '../config/config';
+import GenericNameSpace from '../../interfaces/Generic.interface';
+import UserRepo from '../../repos/UserRepo';
+import { generateOtp, otpExpiresAt } from '../../utils/OtpHelper';
+import UserModel from '../../models/AuthModel/UserModel';
+import createPasswordHash from '../../utils/CreatePasswordHash';
+import AuthNameSpace from '../../interfaces/Auth.interface';
+import config from '../../config/config';
 import jwt from 'jsonwebtoken';
-import matchPassword from '../utils/MatchPassword';
-import UserNameSpace from '../interfaces/User.interface';
-
-
+import matchPassword from '../../utils/MatchPassword';
+import UserNameSpace from '../../interfaces/User.interface';
 
 // import sendOTP from '../utils/Twilio';
 
@@ -64,7 +62,6 @@ class AuthController {
       res.status(500).json(Response);
       return;
     } catch (error) {
-      console.log(error);
       const errorResponse: GenericNameSpace.IApiResponse = {
         success: false,
         message: 'Internal server error',
@@ -73,7 +70,7 @@ class AuthController {
     }
   }
   public static async createPassword(req: Request, res: Response): Promise<void> {
-    const { password, phoneNumber } = req.body;
+    const { password, phoneNumber, otp } = req.body;
 
     try {
       const foundUser = await UserRepo.createpass(phoneNumber);
@@ -86,8 +83,19 @@ class AuthController {
         res.status(404).json(errorResponse);
         return;
       }
-      const passwordHash = await createPasswordHash(password);
+         if (foundUser.otp !== otp) {
+        const errorResponse: GenericNameSpace.IApiResponse = {
+          success: false,
+          message: 'otp is invalid',
+        };
+        res.status(404).json(errorResponse);
+        return;
+      }
+     
+     const passwordHash = await createPasswordHash(password);
       foundUser.password = passwordHash;
+      foundUser.otp = undefined
+       foundUser.otpExpiresAt = undefined
       await foundUser.save();
 
       const response: GenericNameSpace.IApiResponse = {
@@ -95,6 +103,7 @@ class AuthController {
         message: 'Password set successfully',
       };
       res.status(200).json(response);
+    
     } catch (error) {
       console.error(error);
       const errorResponse: GenericNameSpace.IApiResponse = {
@@ -104,53 +113,62 @@ class AuthController {
       res.status(500).json(errorResponse);
     }
   }
-  public static async login(req: Request, res: Response): Promise<void> {
-      const { phoneNumber, password } = req.body;
-  
-      try {
-        const user = await UserRepo.getUserByPhoneNumber(phoneNumber);
-        if (!user) {
-          const errorResponse: GenericNameSpace.IApiResponse = {
-            success: false,
-            message: 'Email is invalid',
-          };
-          res.status(400).json(errorResponse);
-          return;
-        }
-  
-        const isPasswordMatched = await matchPassword(password, user.password);
-        if (!isPasswordMatched) {
-          const errorResponse: GenericNameSpace.IApiResponse = {
-            success: false,
-            message: 'Password is invalid',
-          };
-          res.status(400).json(errorResponse);
-          return;
-        }
-  
-       const { password: pass, ...resUser } = user
 
-      const token = jwt.sign(resUser, config.jwtSecret, {
+  public static async login(req: Request, res: Response): Promise<void> {
+    const { phoneNumber, password } = req.body;
+
+    try {
+      const user = await UserRepo.getUserByPhoneNumber(phoneNumber);
+      if (!user) {
+        const errorResponse: GenericNameSpace.IApiResponse = {
+          success: false,
+          message: 'Email is invalid',
+        };
+        res.status(400).json(errorResponse);
+        return;
+      }
+
+      const isPasswordMatched = await matchPassword(password, user.password);
+      if (!isPasswordMatched) {
+        const errorResponse: GenericNameSpace.IApiResponse = {
+          success: false,
+          message: 'Password is invalid',
+        };
+        res.status(400).json(errorResponse);
+        return;
+      }
+
+      const token = jwt.sign(user, config.jwtSecret, {
         expiresIn: '24h',
       });
       const response: GenericNameSpace.IApiResponse<AuthNameSpace.ILoginResponse> = {
         success: true,
         message: 'Login successful!',
-        data:{
+        data: {
           token,
-          user: resUser,
+          user,
         },
-        };
-        res.json(response);
-      } catch (error) {
-        console.log(error)
-        const errorResponse: GenericNameSpace.IApiResponse = {
-          success: false,
-          message: 'Internal server error',
-        };
-        res.status(500).json(errorResponse);
-      }
+      };
+      res.json(response);
+    } catch (error) {
+      console.log(error);
+      const errorResponse: GenericNameSpace.IApiResponse = {
+        success: false,
+        message: 'Internal server error',
+      };
+      res.status(500).json(errorResponse);
     }
+  }
+  public static async getProfile(req: AuthNameSpace.IRequest, res: Response): Promise<void> {
+    const user = req.user as UserNameSpace.IModel;
+
+    const response: GenericNameSpace.IApiResponse<UserNameSpace.IModel> = {
+      success: true,
+      message: 'profile fetch successful!',
+      data: user,
+    };
+    res.json(response);
+  }
 }
 
 export default AuthController;

@@ -15,7 +15,7 @@ declare namespace AuthNameSpace {
   
   interface ILoginResponse {
     token: string;
-    user: Omit<UserNameSpace.IModel, 'password'>;
+    user: UserNameSpace.IModel
   }
 }
 
