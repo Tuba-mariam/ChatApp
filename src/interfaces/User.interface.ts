@@ -2,7 +2,7 @@ import { Document } from 'mongoose';
 
 declare namespace UserNameSpace {
 
-  export interface IModel extends Document {
+  export interface IModel {
     _id: string;
     phoneNumber: string;
     password: string;

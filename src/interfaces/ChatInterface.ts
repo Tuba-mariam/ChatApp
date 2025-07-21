@@ -3,7 +3,7 @@ import { ObjectId } from "mongoose";
 
 declare namespace ChatNameSpace {
 
-  export interface IModel  {
+  export interface IModel {
     _id: string;
     sender: ObjectId;
     receiver: ObjectId;
@@ -11,7 +11,7 @@ declare namespace ChatNameSpace {
     isRead?: boolean;
   
   }
-   export interface IChat {
+   export interface ICreate {
      sender?: string;
     receiver?: string;
    }

@@ -1,11 +1,13 @@
 
 import { Router } from "express";
-import sendMessageValidation from "../validators/ChatFunctionality/sendValidation";
 import ChatController from "../Controllers/ChatFunctionality/ChatController";
+import sendMessageValidation from "../validators/ChatFunctionality/SendValidation";
+import getMessageValidation from "../validators/ChatFunctionality/GetValidation";
+import markMessageValidation from "../validators/ChatFunctionality/MarkValidation";
 
 const router = Router();
 
-router.post('/send-otp', sendMessageValidation, ChatController.Send);
-
-
+router.post('/send-message', sendMessageValidation, ChatController.Send);
+router.get('/get-message',getMessageValidation, ChatController.getMess);
+router.put('/mark-as-message',markMessageValidation, ChatController.markAsRead)
 export default router;
