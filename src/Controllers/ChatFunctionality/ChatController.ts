@@ -15,6 +15,7 @@ class ChatController {
       };
       res.status(200).json(Response);
     } catch (error) {
+      console.log(error)
       const errorResponse: GenericNameSpace.IApiResponse = {
         success: false,
         message: 'Message sent failed',
@@ -34,7 +35,7 @@ class ChatController {
        res.status(200).json(errorResponse);
        return
       }
-      const Response: GenericNameSpace.IApiResponse<ChatNameSpace.IModel> = {
+      const Response: GenericNameSpace.IApiResponse<ChatNameSpace.IModel[]> = {
         success: true,
         data: getMess,
       };
@@ -47,32 +48,37 @@ class ChatController {
       res.status(500).json(errorResponse);
     }
   }
-  public static async markAsRead(req: Request, res: Response): Promise<void> {
-    const messagesId = req.body;
-    try {
-      const updateMessage = await ChatRepo.markMessageAsRead(messagesId);
-      if (!updateMessage) {
-        const errorResponse: GenericNameSpace.IApiResponse = {
-          success: false,
-          message: 'Message not found already read',
-        };
-        res.status(200).json(errorResponse);
-        return
-      }
-      const Response: GenericNameSpace.IApiResponse<ChatNameSpace.IModel> = {
-        success: false,
-        data: updateMessage,
-        message: 'Message marked as read',
-      };
-      res.status(200).json(Response);
-      
-    } catch (error) {
+public static async markAsRead(req: Request, res: Response): Promise<void> {
+  const {messagesId} = req.body 
+
+  try {
+    const updateMessage = await ChatRepo.markMessageAsRead(messagesId);
+
+    if (!updateMessage) {
       const errorResponse: GenericNameSpace.IApiResponse = {
         success: false,
-        message: 'Error marking message as read',
+        message: 'No messages found or already marked as read',
       };
-      res.status(500).json(errorResponse);
+      res.status(200).json(errorResponse);
+      return;
     }
+
+    const Response: GenericNameSpace.IApiResponse<ChatNameSpace.IModel> = {
+      success: true,
+      data: updateMessage,
+      message: 'Messages marked as read successfully',
+    };
+    res.status(200).json(Response);
+
+  } catch (error) {
+     console.log(error)
+    const errorResponse: GenericNameSpace.IApiResponse = {
+      success: false,
+      message: 'Error marking message as read',
+    };
+    res.status(500).json(errorResponse);
   }
+}
+
 }
 export default ChatController;

@@ -4,6 +4,9 @@ class UserRepo {
   static async createOtp(phoneNumber: string, otp: string, otpExpires: Date) {
     return await UserModel.create({ phoneNumber, otp, otpExpiresAt: otpExpires });
   }
+  static async resendOtp(phoneNumber: string, otp: string, otpExpires: Date) {
+    return await UserModel.updateOne({ phoneNumber }, { otp, otpExpiresAt: otpExpires });
+  }
   static async findOtp(phoneNumber: string, otp: string) {
     return await UserModel.findOne({ phoneNumber, otp });
   }

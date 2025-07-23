@@ -43,6 +43,36 @@ class AuthController {
       res.status(500).json(errorResponse);
     }
   }
+   public static async reSendOtp(req: Request, res: Response): Promise<void> {
+    const { phoneNumber } = req.params;
+    const otp = generateOtp();
+    const otpExpires = otpExpiresAt();
+
+    try {
+      const  User = await UserModel.findOne({ phoneNumber });
+      if (!User) {
+        res.status(400).json({
+          success: false,
+          message: 'User not found Please Register First',
+        });
+        return;
+      }
+      await UserRepo.resendOtp(phoneNumber, otp, otpExpires);
+      // await sendOTP(phoneNumber, otp);
+      res.json({
+        success: true,
+        data: { otp },
+        message: 'OTP  resend  successfully',
+      });
+    } catch (error) {
+      console.log(error);
+      const errorResponse: GenericNameSpace.IApiResponse = {
+        success: false,
+        message: 'Internal server error',
+      };
+      res.status(500).json(errorResponse);
+    }
+  }
 
   public static async verifyOtp(req: Request, res: Response): Promise<void> {
     const { phoneNumber, otp } = req.body;
@@ -83,7 +113,7 @@ class AuthController {
         res.status(404).json(errorResponse);
         return;
       }
-         if (foundUser.otp !== otp) {
+      if (foundUser.otp !== String(otp)) {
         const errorResponse: GenericNameSpace.IApiResponse = {
           success: false,
           message: 'otp is invalid',
@@ -91,11 +121,10 @@ class AuthController {
         res.status(404).json(errorResponse);
         return;
       }
-     
-     const passwordHash = await createPasswordHash(password);
+
+      const passwordHash = await createPasswordHash(password);
       foundUser.password = passwordHash;
-      foundUser.otp = undefined
-       foundUser.otpExpiresAt = undefined
+      foundUser.otp = undefined;
       await foundUser.save();
 
       const response: GenericNameSpace.IApiResponse = {
@@ -103,7 +132,6 @@ class AuthController {
         message: 'Password set successfully',
       };
       res.status(200).json(response);
-    
     } catch (error) {
       console.error(error);
       const errorResponse: GenericNameSpace.IApiResponse = {
@@ -137,8 +165,12 @@ class AuthController {
         res.status(400).json(errorResponse);
         return;
       }
+        const payload = {
+      id: user._id,
+      phoneNumber: user.phoneNumber,
+    };
 
-      const token = jwt.sign(user, config.jwtSecret, {
+      const token = jwt.sign(payload, config.jwtSecret, {
         expiresIn: '24h',
       });
       const response: GenericNameSpace.IApiResponse<AuthNameSpace.ILoginResponse> = {

@@ -7,7 +7,7 @@ declare namespace ChatNameSpace {
     _id: string;
     sender: ObjectId;
     receiver: ObjectId;
-    content: string;
+    message: string;
     isRead?: boolean;
   
   }
