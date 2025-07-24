@@ -5,7 +5,8 @@ import { connectDb } from './config/connectDb';
 import http from 'http';
 import { Server } from 'socket.io';
 import { registerRoutes } from './routes/RegistersRoutes';
-
+import setUpSendGroupMessageSocket from './utils/SocketIo/GetGroupMessageSocket';
+import setUpSendMessageSocket from './utils/SocketIo/GetMessageSocket';
 
 const app = express();
 app.use(express.json());
@@ -20,10 +21,12 @@ const io = new Server(server, {
 });
 
 // Soketio
-// setupUserSocket(io);
+setUpSendMessageSocket(io);
+setUpSendGroupMessageSocket(io)
 
 // Database connection
 connectDb();
+
 
 // Register routes
 registerRoutes(app);

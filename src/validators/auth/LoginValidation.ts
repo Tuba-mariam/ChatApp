@@ -4,12 +4,12 @@ const loginValidation = [
   body('phoneNumber')
     .notEmpty()
     .withMessage('Phone number is required')
-    .isMobilePhone('any', { strictMode: false }) 
+    .isMobilePhone('any', { strictMode: false })
     .withMessage('Invalid phone number format')
     .isLength({ max: 11 })
     .withMessage('Phone number must be 11 digits'),
 
-     body('password')
+  body('password')
     .notEmpty()
     .withMessage('Password is required')
     .isLength({ min: 6, max: 128 })
@@ -22,7 +22,6 @@ const loginValidation = [
     .withMessage('Password must contain at least one number')
     .matches(/[!@#$%^&*()_+\-=[\]{};':"\\|,.<>/?]/)
     .withMessage('Password must contain at least one special character'),
-
 ];
 
 export default loginValidation;

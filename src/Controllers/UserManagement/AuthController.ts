@@ -43,13 +43,13 @@ class AuthController {
       res.status(500).json(errorResponse);
     }
   }
-   public static async reSendOtp(req: Request, res: Response): Promise<void> {
+  public static async reSendOtp(req: Request, res: Response): Promise<void> {
     const { phoneNumber } = req.params;
     const otp = generateOtp();
     const otpExpires = otpExpiresAt();
 
     try {
-      const  User = await UserModel.findOne({ phoneNumber });
+      const User = await UserModel.findOne({ phoneNumber });
       if (!User) {
         res.status(400).json({
           success: false,
@@ -165,10 +165,10 @@ class AuthController {
         res.status(400).json(errorResponse);
         return;
       }
-        const payload = {
-      id: user._id,
-      phoneNumber: user.phoneNumber,
-    };
+      const payload = {
+        id: user._id,
+        phoneNumber: user.phoneNumber,
+      };
 
       const token = jwt.sign(payload, config.jwtSecret, {
         expiresIn: '24h',

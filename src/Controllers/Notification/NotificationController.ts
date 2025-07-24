@@ -6,18 +6,18 @@ import AuthNameSpace from '../../interfaces/Auth.interface';
 
 class NotificationController {
   public static async Send(req: AuthNameSpace.IRequest, res: Response): Promise<void> {
-    const userId = req.user?._id 
+    const userId = req.user?._id;
     const content = req.body;
-    
+
     try {
-    if (!userId || !content?.title || !content?.body) {
-      const errorResponse: GenericNameSpace.IApiResponse = {
-      success: false,
-      message: 'Invalid notification data',
-    };
-    res.status(400).json(errorResponse);
-    return;
-  }
+      if (!userId || !content?.title || !content?.body) {
+        const errorResponse: GenericNameSpace.IApiResponse = {
+          success: false,
+          message: 'Invalid notification data',
+        };
+        res.status(400).json(errorResponse);
+        return;
+      }
       const notification = await NotificationRepo.sendNotification(userId, content);
       const Response: GenericNameSpace.IApiResponse<NotificationNameSpace.IModel> = {
         success: true,
@@ -34,22 +34,22 @@ class NotificationController {
     }
   }
   public static async get(req: AuthNameSpace.IRequest, res: Response): Promise<void> {
-    const userId = req.user?._id as string
-    
+    const userId = req.user?._id as string;
+
     try {
       const notification = await NotificationRepo.getNotification(userId);
-      if(!notification){
-         const errorResponse: GenericNameSpace.IApiResponse = {
-        success: false,
-        message: 'Notification not found',
-      };
-      res.status(500).json(errorResponse);
-      return
-    }
-       const Response: GenericNameSpace.IApiResponse<NotificationNameSpace.IModel> = {
+      if (!notification) {
+        const errorResponse: GenericNameSpace.IApiResponse = {
+          success: false,
+          message: 'Notification not found',
+        };
+        res.status(500).json(errorResponse);
+        return;
+      }
+      const Response: GenericNameSpace.IApiResponse<NotificationNameSpace.IModel> = {
         success: true,
-        data : notification,
-        message :"Notification fetch succesfully",
+        data: notification,
+        message: 'Notification fetch succesfully',
       };
       res.status(200).json(Response);
     } catch (error) {

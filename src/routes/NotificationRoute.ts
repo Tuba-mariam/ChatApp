@@ -6,7 +6,19 @@ import requestValidationMiddleware from '../middlewares/RequestValidation.Middle
 
 const router = Router();
 
-router.post('/send-notification', sendNotificationValidation,requestValidationMiddleware, authenticateJwt, NotificationController.Send);
-router.get('/get-notification', sendNotificationValidation,requestValidationMiddleware, authenticateJwt, NotificationController.get);
+router.post(
+  '/send-notification',
+  sendNotificationValidation,
+  requestValidationMiddleware,
+  authenticateJwt,
+  NotificationController.Send
+);
+router.get(
+  '/get-notification',
+  sendNotificationValidation,
+  requestValidationMiddleware,
+  authenticateJwt,
+  NotificationController.get
+);
 
 export default router;

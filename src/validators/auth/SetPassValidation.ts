@@ -4,20 +4,20 @@ const setPassValidation = [
   body('phoneNumber')
     .notEmpty()
     .withMessage('Phone number is required')
-    .isMobilePhone('any', { strictMode: false }) 
+    .isMobilePhone('any', { strictMode: false })
     .withMessage('Invalid phone number format')
     .isLength({ max: 11 })
     .withMessage('Phone number must be 11 digits'),
 
-     body('otp')
+  body('otp')
     .notEmpty()
     .withMessage('OTP is required')
     .isLength({ min: 6, max: 6 })
     .withMessage('OTP must be 6 digits long')
     .isNumeric()
     .withMessage('OTP must be numeric'),
-    
-    body('password')
+
+  body('password')
     .notEmpty()
     .withMessage('Password is required')
     .isLength({ min: 6, max: 128 })
@@ -30,7 +30,6 @@ const setPassValidation = [
     .withMessage('Password must contain at least one number')
     .matches(/[!@#$%^&*()_+\-=[\]{};':"\\|,.<>/?]/)
     .withMessage('Password must contain at least one special character'),
-
 ];
 
 export default setPassValidation;

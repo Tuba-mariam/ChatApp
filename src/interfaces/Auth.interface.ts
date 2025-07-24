@@ -12,10 +12,10 @@ declare namespace AuthNameSpace {
     phoneNumber: string;
     password: string;
   }
-  
+
   interface ILoginResponse {
     token: string;
-    user: UserNameSpace.IModel
+    user: UserNameSpace.IModel;
   }
 }
 

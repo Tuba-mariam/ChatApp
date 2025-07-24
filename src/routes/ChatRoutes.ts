@@ -9,6 +9,6 @@ import markMessageValidation from '../validators/ChatFunctionality/MarkValidatio
 const router = Router();
 
 router.post('/send-message', sendMessageValidation, requestValidationMiddleware, ChatController.Send);
-router.get('/get-message', getMessageValidation, requestValidationMiddleware, ChatController.getMess);
-router.put('/mark-as-read', markMessageValidation,requestValidationMiddleware, ChatController.markAsRead);
+router.get('/get-message/:receiver', getMessageValidation, requestValidationMiddleware, ChatController.getMess);
+router.put('/mark-as-read', markMessageValidation, requestValidationMiddleware, ChatController.markAsRead);
 export default router;

@@ -4,8 +4,6 @@ import config from '../config/config';
 import AuthNameSpace from '../interfaces/Auth.interface';
 import UserNameSpace from '../interfaces/User.interface';
 
-
-
 const authenticateJwt = (req: AuthNameSpace.IRequest, res: Response, next: NextFunction): void => {
   const authHeader = req.headers.authorization;
 
@@ -15,11 +13,8 @@ const authenticateJwt = (req: AuthNameSpace.IRequest, res: Response, next: NextF
   }
   const token = authHeader.split(' ')[1];
 
-
- 
-
   try {
-    const decoded = jwt.verify(token, config.jwtSecret) as UserNameSpace.IModel
+    const decoded = jwt.verify(token, config.jwtSecret) as UserNameSpace.IModel;
     req.user = decoded;
     next();
   } catch (error) {

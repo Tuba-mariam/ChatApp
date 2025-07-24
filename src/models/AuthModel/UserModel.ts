@@ -7,7 +7,7 @@ export const userSchema = new mongoose.Schema<UserNameSpace.IModel>(
     password: { type: String },
     otp: { type: String },
     otpExpiresAt: { type: Date },
-   },
+  },
   { timestamps: true }
 );
 

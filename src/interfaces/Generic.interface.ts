@@ -12,13 +12,11 @@ declare namespace GenericNameSpace {
     user?: JwtPayload | UserNameSpace.IModel;
   }
 
-  interface IApiResponse <T= undefined>{
+  interface IApiResponse<T = undefined> {
     success: boolean;
     message?: string;
     data?: T;
   }
-
-  
 }
 
 export default GenericNameSpace;

@@ -23,8 +23,8 @@ class GroupController {
       res.status(500).json(errorResponse);
     }
   }
-  public static async get(req: Request, res: Response): Promise<void> {
-    const {groupId} = req.body;
+  public static async get(req: AuthNameSpace.IRequest, res: Response): Promise<void> {
+    const { groupId } = req.params;
     try {
       const getGroup = await GroupRepo.getMember(groupId);
       if (!getGroup) {
@@ -49,10 +49,10 @@ class GroupController {
     }
   }
   public static async add(req: AuthNameSpace.IRequest, res: Response): Promise<void> {
-    const {Newmembers , groupId} = req.body;
+    const { Newmembers, groupId } = req.body;
     const userId = req.user?._id;
     try {
-      const addGroup = await GroupRepo.addMembers(Newmembers,  groupId, userId);
+      const addGroup = await GroupRepo.addMembers(Newmembers, groupId, userId);
       if (!addGroup) {
         const errorResponse: GenericNameSpace.IApiResponse = {
           success: false,
@@ -76,10 +76,10 @@ class GroupController {
     }
   }
   public static async remove(req: AuthNameSpace.IRequest, res: Response): Promise<void> {
-    const {groupId , membersId} = req.body;
+    const { groupId, membersId } = req.body;
     const userId = req.user?._id;
     try {
-      const removeGroup = await GroupRepo.removeMembers(groupId, userId , membersId);
+      const removeGroup = await GroupRepo.removeMembers(groupId, userId, membersId);
       if (!removeGroup) {
         const errorResponse: GenericNameSpace.IApiResponse = {
           success: false,

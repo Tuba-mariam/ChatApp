@@ -1,7 +1,6 @@
 import { Document } from 'mongoose';
 
 declare namespace UserNameSpace {
-
   export interface IModel {
     _id: string;
     phoneNumber: string;

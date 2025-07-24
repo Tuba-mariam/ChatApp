@@ -9,4 +9,3 @@ const getNotificationValidation = [
 ];
 
 export default getNotificationValidation;
-
