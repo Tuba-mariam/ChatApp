@@ -11,14 +11,8 @@ router.post(
   sendNotificationValidation,
   requestValidationMiddleware,
   authenticateJwt,
-  NotificationController.Send
+  NotificationController.send
 );
-router.get(
-  '/get-notification',
-  sendNotificationValidation,
-  requestValidationMiddleware,
-  authenticateJwt,
-  NotificationController.get
-);
+router.get('/get-notification', authenticateJwt, NotificationController.get);
 
 export default router;

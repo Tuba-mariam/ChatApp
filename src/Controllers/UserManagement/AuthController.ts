@@ -13,7 +13,7 @@ import UserNameSpace from '../../interfaces/User.interface';
 // import sendOTP from '../utils/Twilio';
 
 class AuthController {
-  public static async SendOtp(req: Request, res: Response): Promise<void> {
+  public static async sendOtp(req: Request, res: Response): Promise<void> {
     const { phoneNumber } = req.body;
     const otp = generateOtp();
     const otpExpires = otpExpiresAt();
@@ -27,7 +27,7 @@ class AuthController {
         });
         return;
       }
-      await UserRepo.createOtp(phoneNumber, otp, otpExpires);
+      await UserRepo.createUser(phoneNumber, otp, otpExpires);
       // await sendOTP(phoneNumber, otp);
       res.json({
         success: true,
@@ -35,7 +35,6 @@ class AuthController {
         message: 'OTP generate successfully',
       });
     } catch (error) {
-      console.log(error);
       const errorResponse: GenericNameSpace.IApiResponse = {
         success: false,
         message: 'Internal server error',
@@ -43,21 +42,22 @@ class AuthController {
       res.status(500).json(errorResponse);
     }
   }
-  public static async reSendOtp(req: Request, res: Response): Promise<void> {
-    const { phoneNumber } = req.params;
-    const otp = generateOtp();
-    const otpExpires = otpExpiresAt();
 
+  public static async resendOtp(req: Request, res: Response): Promise<void> {
     try {
-      const User = await UserModel.findOne({ phoneNumber });
-      if (!User) {
+      const { phoneNumber } = req.params;
+      const user = await UserRepo.findUserByQuery({ phoneNumber, isVerified: true });
+      if (!user) {
         res.status(400).json({
           success: false,
           message: 'User not found Please Register First',
         });
         return;
       }
-      await UserRepo.resendOtp(phoneNumber, otp, otpExpires);
+
+      const otp = generateOtp();
+      const otpExpires = otpExpiresAt();
+      await UserRepo.updateUserByQuery({ phoneNumber }, { otp, otpExpiresAt: otpExpires });
       // await sendOTP(phoneNumber, otp);
       res.json({
         success: true,
@@ -77,14 +77,17 @@ class AuthController {
   public static async verifyOtp(req: Request, res: Response): Promise<void> {
     const { phoneNumber, otp } = req.body;
     try {
-      const user = await UserRepo.findOtp(phoneNumber, otp);
+      const user = await UserRepo.findUserByQuery({ phoneNumber, otp });
       if (!user) {
         const errorResponse: GenericNameSpace.IApiResponse = {
           success: false,
-          message: 'Otp is invalid',
+          message: 'OTP is invalid!',
         };
         res.status(500).json(errorResponse);
       }
+
+      await UserRepo.updateUserByQuery({ phoneNumber }, { isVerified: true });
+
       const Response: GenericNameSpace.IApiResponse = {
         success: true,
         message: 'Otp verified successfully',
@@ -99,13 +102,14 @@ class AuthController {
       res.status(500).json(errorResponse);
     }
   }
-  public static async createPassword(req: Request, res: Response): Promise<void> {
-    const { password, phoneNumber, otp } = req.body;
+
+  public static async setPassword(req: Request, res: Response): Promise<void> {
+    const { password, phoneNumber } = req.body;
 
     try {
-      const foundUser = await UserRepo.createpass(phoneNumber);
+      const dbUser = await UserRepo.findUserByQuery({ phoneNumber });
 
-      if (!foundUser) {
+      if (!dbUser) {
         const errorResponse: GenericNameSpace.IApiResponse = {
           success: false,
           message: 'User not found',
@@ -113,19 +117,18 @@ class AuthController {
         res.status(404).json(errorResponse);
         return;
       }
-      if (foundUser.otp !== String(otp)) {
+
+      if (!dbUser.isVerified) {
         const errorResponse: GenericNameSpace.IApiResponse = {
           success: false,
-          message: 'otp is invalid',
+          message: 'otp is not verified',
         };
         res.status(404).json(errorResponse);
         return;
       }
 
       const passwordHash = await createPasswordHash(password);
-      foundUser.password = passwordHash;
-      foundUser.otp = undefined;
-      await foundUser.save();
+      await UserRepo.updateUserByQuery({ phoneNumber }, { password: passwordHash });
 
       const response: GenericNameSpace.IApiResponse = {
         success: true,
@@ -133,7 +136,6 @@ class AuthController {
       };
       res.status(200).json(response);
     } catch (error) {
-      console.error(error);
       const errorResponse: GenericNameSpace.IApiResponse = {
         success: false,
         message: 'Internal server error',
@@ -146,11 +148,11 @@ class AuthController {
     const { phoneNumber, password } = req.body;
 
     try {
-      const user = await UserRepo.getUserByPhoneNumber(phoneNumber);
+      const user = await UserRepo.findUserByQuery({ phoneNumber });
       if (!user) {
         const errorResponse: GenericNameSpace.IApiResponse = {
           success: false,
-          message: 'Email is invalid',
+          message: 'Phone Number is invalid',
         };
         res.status(400).json(errorResponse);
         return;
@@ -165,12 +167,8 @@ class AuthController {
         res.status(400).json(errorResponse);
         return;
       }
-      const payload = {
-        id: user._id,
-        phoneNumber: user.phoneNumber,
-      };
 
-      const token = jwt.sign(payload, config.jwtSecret, {
+      const token = jwt.sign(user, config.jwtSecret, {
         expiresIn: '24h',
       });
       const response: GenericNameSpace.IApiResponse<AuthNameSpace.ILoginResponse> = {
@@ -191,6 +189,7 @@ class AuthController {
       res.status(500).json(errorResponse);
     }
   }
+
   public static async getProfile(req: AuthNameSpace.IRequest, res: Response): Promise<void> {
     const user = req.user as UserNameSpace.IModel;
 

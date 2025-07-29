@@ -1,11 +1,12 @@
 import { ObjectId } from 'mongoose';
+import UserNameSpace from './User.interface';
 
 declare namespace GroupNameSpace {
   export interface IModel {
     _id: string;
     name: string;
-    members: ObjectId;
-    createdBy: ObjectId;
+    members: ObjectId[] | UserNameSpace.IModel[];
+    createdBy: ObjectId | UserNameSpace.IModel;
   }
 }
 

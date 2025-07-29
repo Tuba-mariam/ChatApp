@@ -1,20 +1,16 @@
+import { FilterQuery, UpdateQuery } from 'mongoose';
 import UserModel from '../models/AuthModel/UserModel';
+import UserNameSpace from '../interfaces/User.interface';
 
 class UserRepo {
-  static async createOtp(phoneNumber: string, otp: string, otpExpires: Date) {
+  static async createUser(phoneNumber: string, otp: string, otpExpires: Date) {
     return await UserModel.create({ phoneNumber, otp, otpExpiresAt: otpExpires });
   }
-  static async resendOtp(phoneNumber: string, otp: string, otpExpires: Date) {
-    return await UserModel.updateOne({ phoneNumber }, { otp, otpExpiresAt: otpExpires });
+  static async findUserByQuery(query: FilterQuery<UserNameSpace.IModel>) {
+    return await UserModel.findOne(query).lean();
   }
-  static async findOtp(phoneNumber: string, otp: string) {
-    return await UserModel.findOne({ phoneNumber, otp });
-  }
-  static async createpass(phoneNumber: string) {
-    return await UserModel.findOne({ phoneNumber });
-  }
-  public static async getUserByPhoneNumber(phoneNumber: string) {
-    return await UserModel.findOne({ phoneNumber });
+  static async updateUserByQuery(query: FilterQuery<UserNameSpace.IModel>, payload: UpdateQuery<UserNameSpace.IModel>) {
+    await UserModel.findOneAndUpdate(query, payload);
   }
 }
 

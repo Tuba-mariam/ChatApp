@@ -1,10 +1,9 @@
-import { Document } from 'mongoose';
-
 declare namespace UserNameSpace {
   export interface IModel {
     _id: string;
     phoneNumber: string;
     password: string;
+    isVerified: boolean;
     otp?: string;
     otpExpiresAt?: Date;
   }

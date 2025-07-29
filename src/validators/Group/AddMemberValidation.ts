@@ -1,7 +1,7 @@
 import { body } from 'express-validator';
 
 export const addMemberValidation = [
-  body('groupId')
+  body('member')
     .notEmpty()
     .withMessage('Group ID is required')
     .isMongoId()

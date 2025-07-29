@@ -3,31 +3,35 @@ import { Request, Response } from 'express';
 import GroupRepo from '../../repos/GroupRepo';
 import AuthNameSpace from '../../interfaces/Auth.interface';
 import GroupNameSpace from '../../interfaces/GroupInterface';
+import UserNameSpace from '../../interfaces/User.interface';
 
 class GroupController {
-  public static async create(req: Request, res: Response): Promise<void> {
-    const { name, members, createdBy } = req.body;
+  public static async createGroup(req: AuthNameSpace.IRequest, res: Response): Promise<void> {
+    const { name, members } = req.body;
+    const createdBy = req.user?._id;
     try {
-      const groups = await GroupRepo.createGroup(name, members, createdBy);
+      const group = await GroupRepo.createGroup(name, members, createdBy);
       const Response: GenericNameSpace.IApiResponse<GroupNameSpace.IModel> = {
         success: true,
         message: 'Group created successfully',
-        data: groups,
+        data: group,
       };
       res.status(200).json(Response);
     } catch (error) {
+      console.log(error);
       const errorResponse: GenericNameSpace.IApiResponse = {
         success: false,
-        message: 'Group craetion  failed',
+        message: 'Group creation  failed',
       };
       res.status(500).json(errorResponse);
     }
   }
-  public static async get(req: AuthNameSpace.IRequest, res: Response): Promise<void> {
+  public static async getGroupMembers(req: AuthNameSpace.IRequest, res: Response): Promise<void> {
     const { groupId } = req.params;
     try {
-      const getGroup = await GroupRepo.getMember(groupId);
-      if (!getGroup) {
+      const group = await GroupRepo.getGroup(groupId);
+
+      if (!group) {
         const errorResponse: GenericNameSpace.IApiResponse = {
           success: false,
           message: 'Group not found',
@@ -35,9 +39,9 @@ class GroupController {
         res.status(200).json(errorResponse);
         return;
       }
-      const Response: GenericNameSpace.IApiResponse<GroupNameSpace.IModel> = {
+      const Response: GenericNameSpace.IApiResponse<UserNameSpace.IModel[]> = {
         success: true,
-        data: getGroup,
+        data: group.members as UserNameSpace.IModel[],
       };
       res.status(200).json(Response);
     } catch (error) {
@@ -48,23 +52,29 @@ class GroupController {
       res.status(500).json(errorResponse);
     }
   }
-  public static async add(req: AuthNameSpace.IRequest, res: Response): Promise<void> {
-    const { Newmembers, groupId } = req.body;
+  public static async addMemberToGroup(req: AuthNameSpace.IRequest, res: Response): Promise<void> {
+    const { groupId } = req.params;
+    const { member } = req.body;
     const userId = req.user?._id;
+
     try {
-      const addGroup = await GroupRepo.addMembers(Newmembers, groupId, userId);
-      if (!addGroup) {
+      const group = await GroupRepo.getGroup(groupId);
+      if (!group) {
         const errorResponse: GenericNameSpace.IApiResponse = {
           success: false,
-          message: 'Group not found',
+          message: 'Group not found!',
         };
-        res.status(200).json(errorResponse);
+        res.status(404).json(errorResponse);
         return;
       }
-      const Response: GenericNameSpace.IApiResponse<GroupNameSpace.IModel> = {
+
+      const oldMembers = group.members as UserNameSpace.IModel[];
+      const newMembers = [...oldMembers.map(item => item._id), member];
+
+      await GroupRepo.addMembers(groupId, userId, newMembers);
+      const Response: GenericNameSpace.IApiResponse = {
         success: true,
-        data: addGroup,
-        message: 'Members added succesfully',
+        message: 'Member added successfully',
       };
       res.status(200).json(Response);
     } catch (error) {
@@ -75,29 +85,36 @@ class GroupController {
       res.status(500).json(errorResponse);
     }
   }
-  public static async remove(req: AuthNameSpace.IRequest, res: Response): Promise<void> {
-    const { groupId, membersId } = req.body;
+  public static async removeMemberFromGroup(req: AuthNameSpace.IRequest, res: Response): Promise<void> {
+    const { groupId } = req.params;
+    const { member } = req.body;
     const userId = req.user?._id;
+
     try {
-      const removeGroup = await GroupRepo.removeMembers(groupId, userId, membersId);
-      if (!removeGroup) {
+      const group = await GroupRepo.getGroup(groupId);
+      if (!group) {
         const errorResponse: GenericNameSpace.IApiResponse = {
           success: false,
-          message: 'Group not found',
+          message: 'Group not found!',
         };
-        res.status(200).json(errorResponse);
+        res.status(404).json(errorResponse);
         return;
       }
-      const Response: GenericNameSpace.IApiResponse<GroupNameSpace.IModel> = {
+
+      const oldMembers = group.members as UserNameSpace.IModel[];
+      const newMembers = oldMembers.filter(item => item._id !== member).map(item => item._id);
+
+      await GroupRepo.addMembers(groupId, userId, newMembers);
+      const Response: GenericNameSpace.IApiResponse = {
         success: true,
-        data: removeGroup,
-        message: 'Members remove succesfully',
+        message: 'Member removed successfully',
       };
       res.status(200).json(Response);
     } catch (error) {
+      console.log(error);
       const errorResponse: GenericNameSpace.IApiResponse = {
         success: false,
-        message: 'Failed to remove members',
+        message: 'Failed to add members',
       };
       res.status(500).json(errorResponse);
     }

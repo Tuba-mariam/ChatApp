@@ -1,16 +1,16 @@
 import mongoose, { Schema } from 'mongoose';
-import ChatGroupNameSpace from '../interfaces/ChatGroupInterface';
+import GroupChatNameSpace from '../interfaces/GroupChatInterface';
 
-export const chatgroupSchema = new mongoose.Schema<ChatGroupNameSpace.IModel>(
+export const groupChatSchema = new mongoose.Schema<GroupChatNameSpace.IModel>(
   {
     groupId: { type: Schema.Types.ObjectId, ref: 'ChatGroup', required: true },
     sender: { type: Schema.Types.ObjectId, ref: 'User', required: true },
     message: { type: String, required: true },
-    isRead: { type: Boolean, default: false },
+    ReadBy: { type: Schema.Types.ObjectId, ref: 'User' },
   },
   { timestamps: true }
 );
 
-const ChatGroupModel = mongoose.model('ChatGroup', chatgroupSchema);
+const GroupChatModel = mongoose.model('GroupChat', groupChatSchema);
 
-export default ChatGroupModel;
+export default GroupChatModel;
