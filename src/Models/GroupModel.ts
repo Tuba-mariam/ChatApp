@@ -1,5 +1,5 @@
 import mongoose from 'mongoose';
-import GroupNameSpace from '../../interfaces/GroupInterface';
+import GroupNameSpace from '../Interfaces/GroupInterface';
 
 export const groupSchema = new mongoose.Schema<GroupNameSpace.IModel>(
   {

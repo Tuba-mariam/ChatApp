@@ -1,10 +1,10 @@
 import { Router } from 'express';
 import { createGroupValidation } from '../validators/Group/CreateValidation';
-import GroupController from '../Controllers/Group/GroupController';
 import { addMemberValidation } from '../validators/Group/AddMemberValidation';
-import authenticateJwt from '../middlewares/AuthenticateJwt.Middlewares';
+import authenticateJwt from '../Middlewares/AuthenticateJwt.Middlewares';
 import { removeMemberValidation } from '../validators/Group/RemoveValidation';
-import requestValidationMiddleware from '../middlewares/RequestValidation.Middleware';
+import requestValidationMiddleware from '../Middlewares/RequestValidation.Middleware';
+import GroupController from '../Controllers/GroupController';
 
 const router = Router();
 

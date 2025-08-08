@@ -1,18 +1,19 @@
 import { Router } from 'express';
-import NotificationController from '../Controllers/Notification/NotificationController';
-import sendNotificationValidation from '../validators/Notification/SendNotification';
-import authenticateJwt from '../middlewares/AuthenticateJwt.Middlewares';
-import requestValidationMiddleware from '../middlewares/RequestValidation.Middleware';
+import authenticateJwt from '../Middlewares/AuthenticateJwt.Middlewares';
+import requestValidationMiddleware from '../Middlewares/RequestValidation.Middleware';
+import sendNotificationValidation from '../validators/NotificationValidation/SendNotificationValidation';
+import NotificationController from '../Controllers/NotificationController';
 
 const router = Router();
 
 router.post(
-  '/send-notification',
+  '/send-notification/:sender',
+  authenticateJwt,
   sendNotificationValidation,
   requestValidationMiddleware,
-  authenticateJwt,
-  NotificationController.send
+  NotificationController.sendNotification
 );
-router.get('/get-notification', authenticateJwt, NotificationController.get);
+router.get('/get-notifications', authenticateJwt, NotificationController.getAll);
+router.put('/mark-as-read-notifications', authenticateJwt, NotificationController.markAsRead);
 
 export default router;

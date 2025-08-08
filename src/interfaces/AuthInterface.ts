@@ -1,6 +1,6 @@
 import { Request } from 'express';
 import { JwtPayload } from 'jsonwebtoken';
-import UserNameSpace from './User.interface';
+import UserNameSpace from '../Interfaces/UserInterface';
 
 declare namespace AuthNameSpace {
   export interface IRequest extends Request {

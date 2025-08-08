@@ -1,16 +1,27 @@
 import { ObjectId } from 'mongoose';
+import UserNameSpace from './UserInterface';
 
 declare namespace NotificationNameSpace {
-  export interface IModel {
+  interface IModel {
     _id: string;
-    userId: ObjectId;
-    content: string;
-    isRead?: boolean;
+    sender: ObjectId | UserNameSpace.IModel;
+    receiver: ObjectId | UserNameSpace.IModel;
+    message: ObjectId | null;
+    group: ObjectId | null;
+    type: string;
+    title: string;
+    body: string;
+    isRead: boolean;
   }
 
-  export interface ICreate {
-    userId: string;
-    content: string;
+  interface ICreate {
+    sender: string;
+    receiver: string;
+    message: string;
+    group: string;
+    type: string;
+    title: string;
+    body: string;
   }
 }
 

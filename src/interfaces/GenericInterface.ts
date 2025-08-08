@@ -1,5 +1,5 @@
 import { JwtPayload } from 'jsonwebtoken';
-import UserNameSpace from './User.interface';
+import UserNameSpace from './UserInterface';
 
 declare namespace GenericNameSpace {
   interface IConfig {

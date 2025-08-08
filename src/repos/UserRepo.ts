@@ -1,6 +1,6 @@
 import { FilterQuery, UpdateQuery } from 'mongoose';
-import UserModel from '../models/AuthModel/UserModel';
-import UserNameSpace from '../interfaces/User.interface';
+import UserNameSpace from '../Interfaces/UserInterface';
+import UserModel from '../Models/UserModel';
 
 class UserRepo {
   static async createUser(phoneNumber: string, otp: string, otpExpires: Date) {

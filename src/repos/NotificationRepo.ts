@@ -1,11 +1,16 @@
-import NotificationModel from '../models/Notification/NotificationModel';
+import NotificationNameSpace from '../Interfaces/NotificationInterface';
+import NotificationModel from '../Models/NotificationModel';
 
 class NotificationRepo {
-  static async sendNotification(userId: string, content: string) {
-    return await NotificationModel.create({ userId, content });
+  static async createNotification(data: NotificationNameSpace.ICreate) {
+    return await NotificationModel.create(data);
   }
-  static async getNotification(userId: string) {
-    return await NotificationModel.findById(userId);
+  static async getAllNotification(userId: string) {
+    return await NotificationModel.find({ receiver: userId });
+  }
+
+  static async markAsReadNotification(notification: string) {
+    return await NotificationModel.findByIdAndUpdate(notification);
   }
 }
 export default NotificationRepo;

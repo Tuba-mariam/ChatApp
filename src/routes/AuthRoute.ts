@@ -1,11 +1,10 @@
 import { Router } from 'express';
-
-import AuthController from '../Controllers/UserManagement/AuthController';
 import sendOtpValidation from '../validators/auth/RegisterValidator';
 import loginValidation from '../validators/auth/LoginValidation';
 import setPassValidation from '../validators/auth/SetPassValidation';
-import authenticateJwt from '../middlewares/AuthenticateJwt.Middlewares';
-import requestValidationMiddleware from '../middlewares/RequestValidation.Middleware';
+import AuthController from '../Controllers/AuthController';
+import requestValidationMiddleware from '../Middlewares/RequestValidation.Middleware';
+import authenticateJwt from '../Middlewares/AuthenticateJwt.Middlewares';
 
 const router = Router();
 

@@ -1,5 +1,5 @@
 import mongoose from 'mongoose';
-import UserNameSpace from '../../interfaces/User.interface';
+import UserNameSpace from '../Interfaces/UserInterface';
 
 export const userSchema = new mongoose.Schema<UserNameSpace.IModel>(
   {

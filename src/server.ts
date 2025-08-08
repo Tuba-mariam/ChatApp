@@ -1,12 +1,12 @@
 import express from 'express';
-import config from './config/config';
 import bodyParser from 'body-parser';
-import { connectDb } from './config/connectDb';
 import http from 'http';
 import { Server } from 'socket.io';
-import { registerRoutes } from './routes/RegistersRoutes';
-import setUpSendGroupMessageSocket from './utils/SocketIo/GetGroupMessageSocket';
-import setUpSendMessageSocket from './utils/SocketIo/GetMessageSocket';
+import { registerRoutes } from './Routes/RegistersRoutes';
+import setUpSendGroupMessageSocket from './Utils/SocketIo/GetNotificationSocket';
+// import setUpSendMessageSocket from './Utils/SocketIo/GetMessageSocket';
+import { connectDb } from './Config/connectDb';
+import config from './Config/config';
 
 const app = express();
 app.use(express.json());
@@ -20,13 +20,12 @@ const io = new Server(server, {
   },
 });
 
-// Soketio
-setUpSendMessageSocket(io);
-setUpSendGroupMessageSocket(io)
+// Socket-io
+// setUpSendMessageSocket(io);
+setUpSendGroupMessageSocket(io);
 
 // Database connection
 connectDb();
-
 
 // Register routes
 registerRoutes(app);

@@ -1,8 +1,8 @@
 import { NextFunction, Response } from 'express';
 import jwt from 'jsonwebtoken';
-import config from '../config/config';
-import AuthNameSpace from '../interfaces/Auth.interface';
-import UserNameSpace from '../interfaces/User.interface';
+import AuthNameSpace from '../Interfaces/AuthInterface';
+import UserNameSpace from '../Interfaces/UserInterface';
+import config from '../Config/config';
 
 const authenticateJwt = (req: AuthNameSpace.IRequest, res: Response, next: NextFunction): void => {
   const authHeader = req.headers.authorization;

@@ -1,8 +1,9 @@
 import { Router } from 'express';
-import ChatController from '../Controllers/ChatFunctionality/ChatController';
 import sendMessageValidation from '../validators/ChatFunctionality/SendValidation';
-import requestValidationMiddleware from '../middlewares/RequestValidation.Middleware';
-import authenticateJwt from '../middlewares/AuthenticateJwt.Middlewares';
+import requestValidationMiddleware from '../Middlewares/RequestValidation.Middleware';
+import authenticateJwt from '../Middlewares/AuthenticateJwt.Middlewares';
+import ChatController from '../Controllers/ChatController';
+import markAsReadValidation from '../validators/ChatFunctionality/MarkAsReadValidation';
 
 const router = Router();
 
@@ -13,7 +14,13 @@ router.post(
   requestValidationMiddleware,
   ChatController.sendMessage
 );
-router.get('/get-message/:receiver', authenticateJwt, ChatController.getMessages);
-router.put('/mark-as-read/:sender', authenticateJwt, ChatController.markAsRead);
+router.get('/get-message/:chatId', ChatController.getMessages);
+router.put(
+  '/mark-as-read/:chatId',
+  authenticateJwt,
+  markAsReadValidation,
+  requestValidationMiddleware,
+  ChatController.markAsRead
+);
 
 export default router;

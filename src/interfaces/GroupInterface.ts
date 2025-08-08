@@ -1,5 +1,5 @@
 import { ObjectId } from 'mongoose';
-import UserNameSpace from './User.interface';
+import UserNameSpace from './UserInterface';
 
 declare namespace GroupNameSpace {
   export interface IModel {

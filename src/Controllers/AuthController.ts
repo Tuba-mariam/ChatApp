@@ -1,16 +1,15 @@
 import { Request, Response } from 'express';
-import GenericNameSpace from '../../interfaces/Generic.interface';
-import UserRepo from '../../repos/UserRepo';
-import { generateOtp, otpExpiresAt } from '../../utils/OtpHelper';
-import UserModel from '../../models/AuthModel/UserModel';
-import createPasswordHash from '../../utils/CreatePasswordHash';
-import AuthNameSpace from '../../interfaces/Auth.interface';
-import config from '../../config/config';
+import { generateOtp, otpExpiresAt } from '../Utils/OtpHelper';
+import UserModel from '../Models/UserModel';
+import UserRepo from '../Repos/UserRepo';
+import GenericNameSpace from '../Interfaces/GenericInterface';
+import createPasswordHash from '../Utils/CreatePasswordHash';
+import matchPassword from '../Utils/MatchPassword';
 import jwt from 'jsonwebtoken';
-import matchPassword from '../../utils/MatchPassword';
-import UserNameSpace from '../../interfaces/User.interface';
-
-// import sendOTP from '../utils/Twilio';
+import AuthNameSpace from '../Interfaces/AuthInterface';
+import UserNameSpace from '../Interfaces/UserInterface';
+// import sendOTP from '../Utils/Twilio';
+import config from '../Config/config';
 
 class AuthController {
   public static async sendOtp(req: Request, res: Response): Promise<void> {
@@ -29,6 +28,7 @@ class AuthController {
       }
       await UserRepo.createUser(phoneNumber, otp, otpExpires);
       // await sendOTP(phoneNumber, otp);
+
       res.json({
         success: true,
         data: { otp },
@@ -58,14 +58,12 @@ class AuthController {
       const otp = generateOtp();
       const otpExpires = otpExpiresAt();
       await UserRepo.updateUserByQuery({ phoneNumber }, { otp, otpExpiresAt: otpExpires });
-      // await sendOTP(phoneNumber, otp);
       res.json({
         success: true,
         data: { otp },
         message: 'OTP  resend  successfully',
       });
     } catch (error) {
-      console.log(error);
       const errorResponse: GenericNameSpace.IApiResponse = {
         success: false,
         message: 'Internal server error',

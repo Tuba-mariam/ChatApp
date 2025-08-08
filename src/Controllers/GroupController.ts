@@ -1,9 +1,9 @@
-import GenericNameSpace from '../../interfaces/Generic.interface';
 import { Request, Response } from 'express';
-import GroupRepo from '../../repos/GroupRepo';
-import AuthNameSpace from '../../interfaces/Auth.interface';
-import GroupNameSpace from '../../interfaces/GroupInterface';
-import UserNameSpace from '../../interfaces/User.interface';
+import AuthNameSpace from '../Interfaces/AuthInterface';
+import GroupRepo from '../Repos/GroupRepo';
+import GenericNameSpace from '../Interfaces/GenericInterface';
+import GroupNameSpace from '../Interfaces/GroupInterface';
+import UserNameSpace from '../Interfaces/UserInterface';
 
 class GroupController {
   public static async createGroup(req: AuthNameSpace.IRequest, res: Response): Promise<void> {
@@ -57,6 +57,8 @@ class GroupController {
     const { member } = req.body;
     const userId = req.user?._id;
 
+    console.log({ member });
+
     try {
       const group = await GroupRepo.getGroup(groupId);
       if (!group) {
@@ -69,7 +71,9 @@ class GroupController {
       }
 
       const oldMembers = group.members as UserNameSpace.IModel[];
-      const newMembers = [...oldMembers.map(item => item._id), member];
+      const newMembers = [...oldMembers.map(item => item._id.toString()), member];
+
+      console.log({ newMembers });
 
       await GroupRepo.addMembers(groupId, userId, newMembers);
       const Response: GenericNameSpace.IApiResponse = {

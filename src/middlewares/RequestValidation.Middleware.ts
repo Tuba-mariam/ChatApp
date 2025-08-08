@@ -4,6 +4,8 @@ import { validationResult } from 'express-validator';
 const requestValidationMiddleware = (req: Request, res: Response, next: NextFunction): void => {
   const errors = validationResult(req);
 
+  console.log({ errors });
+
   if (!errors.isEmpty()) {
     res.status(400).json({
       message: 'Validation failed',
