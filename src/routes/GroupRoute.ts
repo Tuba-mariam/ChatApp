@@ -15,7 +15,8 @@ router.post(
   requestValidationMiddleware,
   GroupController.createGroup
 );
-router.get('/members/:groupId', GroupController.getGroupMembers);
+router.get('/members/:groupId', GroupController.getGroup);
+
 router.put(
   '/add-member/:groupId',
   addMemberValidation,

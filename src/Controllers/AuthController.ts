@@ -8,8 +8,8 @@ import matchPassword from '../Utils/MatchPassword';
 import jwt from 'jsonwebtoken';
 import AuthNameSpace from '../Interfaces/AuthInterface';
 import UserNameSpace from '../Interfaces/UserInterface';
-// import sendOTP from '../Utils/Twilio';
 import config from '../Config/config';
+import sendOTP from '../Utils/Twilio';
 
 class AuthController {
   public static async sendOtp(req: Request, res: Response): Promise<void> {
@@ -58,6 +58,7 @@ class AuthController {
       const otp = generateOtp();
       const otpExpires = otpExpiresAt();
       await UserRepo.updateUserByQuery({ phoneNumber }, { otp, otpExpiresAt: otpExpires });
+
       res.json({
         success: true,
         data: { otp },

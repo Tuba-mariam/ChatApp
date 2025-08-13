@@ -1,17 +1,23 @@
 import { Document, ObjectId } from 'mongoose';
 import MessageTypeEnum from '../Enum/MessageEnumType';
+import UserNameSpace from './UserInterface';
 
 declare namespace ChatNameSpace {
   interface IModel extends Document {
     _id: string;
-    members: ObjectId[];
+    members: ObjectId[] | UserNameSpace.IModel[];
     messages: ChatNameSpace.Message[];
     isGroup: boolean;
     groupInfo?: {
-      admin: ObjectId;
+      admin: ObjectId | UserNameSpace.IModel;
       title: string;
       image: string;
     };
+  }
+
+  interface ICreateGroupInfo {
+    title: string;
+    image: string;
   }
 
   interface Message {

@@ -3,10 +3,9 @@ import bodyParser from 'body-parser';
 import http from 'http';
 import { Server } from 'socket.io';
 import { registerRoutes } from './Routes/RegistersRoutes';
-import setUpSendGroupMessageSocket from './Utils/SocketIo/GetNotificationSocket';
-// import setUpSendMessageSocket from './Utils/SocketIo/GetMessageSocket';
 import { connectDb } from './Config/connectDb';
 import config from './Config/config';
+import setUpMessageSocket from './Utils/SocketIo/GetMessageSocket';
 
 const app = express();
 app.use(express.json());
@@ -21,8 +20,7 @@ const io = new Server(server, {
 });
 
 // Socket-io
-// setUpSendMessageSocket(io);
-setUpSendGroupMessageSocket(io);
+setUpMessageSocket(io);
 
 // Database connection
 connectDb();

@@ -14,7 +14,8 @@ router.post(
   requestValidationMiddleware,
   ChatController.sendMessage
 );
-router.get('/get-message/:chatId', ChatController.getMessages);
+router.get('/messages/:chatId', authenticateJwt, ChatController.getMessages);
+router.get('/all-chat', authenticateJwt, ChatController.getChats);
 router.put(
   '/mark-as-read/:chatId',
   authenticateJwt,

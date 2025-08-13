@@ -10,15 +10,16 @@ export const messagesSchema = new mongoose.Schema<ChatNameSpace.Message>({
 });
 export const groupInfoSchema = new mongoose.Schema({
   title: { type: String, required: true },
-  isGroup: { type: Boolean, default: false },
   image: { type: String },
+  admin: { type: mongoose.Schema.Types.ObjectId, ref: 'User', required: true },
 });
 
 export const chatSchema = new mongoose.Schema<ChatNameSpace.IModel>(
   {
-    members: [{ type: mongoose.Schema.Types.ObjectId, ref: 'User', required: true }],
+    members: [{ type: mongoose.Schema.Types.ObjectId, ref: 'User' }],
     messages: [messagesSchema],
     groupInfo: groupInfoSchema,
+    isGroup: { type: Boolean, default: false },
   },
   { timestamps: true }
 );
